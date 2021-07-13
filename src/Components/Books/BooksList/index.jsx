@@ -12,6 +12,8 @@ import {
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import ShareIcon from "@material-ui/icons/Share";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { useDispatch } from "react-redux";
+import { fetchBooks, addBook } from "../../../redux/actions";
 import { HTTPService } from "../../../api/HTTPService";
 import { useStyles } from "./styles";
 
@@ -21,9 +23,18 @@ function RecipeReviewCard() {
   const [books, setBooks] = useState([]);
   const [addCards, setAddCards] = useState([]);
   const [deleteCards, setDeleteCards] = useState([]);
+  const dispatch = useDispatch();
+
+  const handleAddBook = (id) => {
+    // dispatch(addBook(id));
+    console.log(id);
+  };
 
   useEffect(() => {
-    HTTPService.getRequest("books?_limit=6").then((data) => setBooks(data));
+    HTTPService.getRequest("books?_limit=6").then((data) => {
+      setBooks(data);
+      dispatch(fetchBooks(data));
+    });
   }, []);
 
   return (
@@ -57,7 +68,8 @@ function RecipeReviewCard() {
             <CardActions disableSpacing>
               <IconButton
                 aria-label="add to basket"
-                onClick={() => setAddCards(item.id)}
+                // onClick={() => setAddCards(item.id)}
+                onClick={() => handleAddBook(item.id)}
               >
                 <AddShoppingCartIcon />
               </IconButton>
