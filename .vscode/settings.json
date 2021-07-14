@@ -3,5 +3,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
     "source.fixAll.preetier": true
-  }
+  },
+  "cSpell.words": [
+    "persistor"
+  ]
 }

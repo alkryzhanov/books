@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -12,29 +12,34 @@ import {
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import ShareIcon from "@material-ui/icons/Share";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { useDispatch } from "react-redux";
-import { fetchBooks, addBook } from "../../../redux/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchBooks, addBook, removeBook } from "../../../redux/actions";
 import { HTTPService } from "../../../api/HTTPService";
 import { useStyles } from "./styles";
 
 function RecipeReviewCard() {
   const classes = useStyles();
-
-  const [books, setBooks] = useState([]);
-  const [addCards, setAddCards] = useState([]);
-  const [deleteCards, setDeleteCards] = useState([]);
   const dispatch = useDispatch();
+  const books = useSelector((state) => state.books);
 
   const handleAddBook = (id) => {
-    // dispatch(addBook(id));
-    console.log(id);
+    dispatch(addBook(id));
+  };
+
+  const handleRemoveBook = (id) => {
+    dispatch(removeBook(id));
   };
 
   useEffect(() => {
-    HTTPService.getRequest("books?_limit=6").then((data) => {
-      setBooks(data);
-      dispatch(fetchBooks(data));
-    });
+    if (books.length === 0) {
+      HTTPService.getRequest("books?_limit=6").then((data) => {
+        const mapedData = data.map((item) => ({
+          ...item,
+          isAdded: false,
+        }));
+        dispatch(fetchBooks(mapedData));
+      });
+    }
   }, []);
 
   return (
@@ -70,6 +75,7 @@ function RecipeReviewCard() {
                 aria-label="add to basket"
                 // onClick={() => setAddCards(item.id)}
                 onClick={() => handleAddBook(item.id)}
+                color={item.isAdded ? "secondary" : ""}
               >
                 <AddShoppingCartIcon />
               </IconButton>
@@ -78,7 +84,7 @@ function RecipeReviewCard() {
               </IconButton>
               <IconButton
                 className={classes.expand}
-                onClick={() => setDeleteCards(item.id)}
+                onClick={() => handleRemoveBook(item.id)}
               >
                 <DeleteIcon />
               </IconButton>

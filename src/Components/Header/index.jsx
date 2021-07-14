@@ -1,10 +1,13 @@
 import React from "react";
 import { AppBar, Toolbar } from "@material-ui/core";
 import { Link, NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useStyles } from "./styles";
 
 function MyAppBar() {
   const classes = useStyles();
+  const cart = useSelector((state) => state.cart);
+
   return (
     <AppBar className={classes.root}>
       <Toolbar>
@@ -35,7 +38,7 @@ function MyAppBar() {
           exact
           to="/cart"
         >
-          Cart
+          {cart.length > 0 ? `Cart (${cart.length})` : "Cart"}
         </NavLink>
         <NavLink
           className={classes.link}
